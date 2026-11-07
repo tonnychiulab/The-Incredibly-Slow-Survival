@@ -1,0 +1,90 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1280 720" width="1280" height="720">
+  <defs>
+    <linearGradient id="bgBw" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#09090B"/>
+      <stop offset="100%" stop-color="#18181B"/>
+    </linearGradient>
+    <style>
+      .mono { font-family: 'Sarasa Mono TC', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace; }
+    </style>
+  </defs>
+
+  <!-- 黑白聲納背景 -->
+  <rect width="1280" height="720" fill="url(#bgBw)"/>
+
+  <!-- 聲納脈衝同心圓波紋 -->
+  <g stroke="#E4E4E7" fill="none" opacity="0.22">
+    <circle cx="518" cy="440" r="140" stroke-width="1.5" stroke-dasharray="6 6"/>
+    <circle cx="518" cy="440" r="280" stroke-width="1.5" stroke-dasharray="8 8"/>
+    <circle cx="518" cy="440" r="440" stroke-width="1.5" stroke-dasharray="10 10"/>
+  </g>
+
+  <!-- 灰階平台區段 -->
+  <g transform="translate(80, 480)">
+    <rect x="0" y="0" width="476" height="52" rx="4" fill="#3F3F46" stroke="#27272A" stroke-width="2"/>
+    <rect x="0" y="-10" width="476" height="12" rx="2" fill="#71717A"/>
+    <rect x="482" y="10" width="152" height="70" fill="#09090B" stroke="#A1A1AA" stroke-dasharray="6 4" stroke-width="2"/>
+    <text x="558" y="50" text-anchor="middle" fill="#E4E4E7" class="mono" font-size="13" font-weight="700">2 格缺口 (x=19..20)</text>
+    <rect x="640" y="0" width="396" height="52" rx="4" fill="#3F3F46" stroke="#27272A" stroke-width="2"/>
+    <rect x="640" y="-10" width="396" height="12" rx="2" fill="#71717A"/>
+  </g>
+
+  <!-- 電鋸 + 未來 2.0s 預測軌跡點 (predictPath 120 ticks) -->
+  <g transform="translate(195, 360)">
+    <rect x="-30" y="-30" width="60" height="60" rx="8" fill="#A1A1AA" stroke="#FAFAFA" stroke-width="2.5" transform="rotate(15)"/>
+    <line x1="0" y1="0" x2="24" y2="-135" stroke="#FFFFFF" stroke-width="3"/>
+    <rect x="2" y="-33" width="10" height="10" fill="#FFFFFF"/>
+    <rect x="8" y="-66" width="10" height="10" fill="#FFFFFF"/>
+    <rect x="14" y="-99" width="10" height="10" fill="#FFFFFF"/>
+    <rect x="20" y="-135" width="12" height="12" fill="#FFFFFF"/>
+    <text x="40" y="-125" fill="#FAFAFA" class="mono" font-size="13" font-weight="700">未來 2.0s 軌跡 (Saw-1 ↑)</text>
+  </g>
+
+  <!-- 樹懶主角（凍結期間世界時間與蓄力暫停） -->
+  <g transform="translate(518, 418)">
+    <rect x="-40" y="-40" width="80" height="92" fill="rgba(255,255,255,0.08)" stroke="#E4E4E7" stroke-width="2"/>
+    <rect x="-24" y="-2" width="48" height="52" rx="6" fill="#71717A" stroke="#3F3F46" stroke-width="2"/>
+    <rect x="-14" y="-32" width="40" height="34" rx="6" fill="#A1A1AA" stroke="#3F3F46" stroke-width="2"/>
+    <rect x="10" y="-26" width="18" height="24" rx="4" fill="#E4E4E7"/>
+    <rect x="20" y="-20" width="5" height="7" fill="#18181B"/>
+  </g>
+
+  <!-- 落石 + 未來 2.0s 預測軌跡點 (predictPath 120 ticks) -->
+  <g transform="translate(918, 230)">
+    <rect x="-30" y="-30" width="60" height="60" rx="6" fill="#A1A1AA" stroke="#FFFFFF" stroke-width="2.5"/>
+    <line x1="0" y1="0" x2="0" y2="210" stroke="#FFFFFF" stroke-width="3"/>
+    <rect x="-5" y="42" width="10" height="10" fill="#FFFFFF"/>
+    <rect x="-5" y="84" width="10" height="10" fill="#FFFFFF"/>
+    <rect x="-5" y="126" width="10" height="10" fill="#FFFFFF"/>
+    <rect x="-5" y="168" width="10" height="10" fill="#FFFFFF"/>
+    <rect x="-6" y="204" width="12" height="12" fill="#FFFFFF"/>
+    <text x="18" y="125" fill="#FAFAFA" class="mono" font-size="13" font-weight="700">未來 2.0s 落點軌跡 (Rock-2 ↓)</text>
+  </g>
+
+  <!-- 頂部 HUD -->
+  <g transform="translate(24, 20)">
+    <text x="0" y="24" fill="#FAFAFA" class="mono" font-size="22" font-weight="700">SLO-MO: 慢速極限 【聲納凍結模式】</text>
+    <text x="0" y="46" fill="#D4D4D8" class="mono" font-size="13">世界時鐘 worldTick 已暫停 ｜ 顯示所有週期陷阱未來 120 ticks (2.0s) 確定性軌跡</text>
+  </g>
+
+  <!-- 右上計分面板 -->
+  <g transform="translate(1010, 20)">
+    <rect x="0" y="0" width="246" height="92" rx="8" fill="rgba(24,24,27,0.92)" stroke="#71717A" stroke-width="1.5"/>
+    <text x="16" y="28" fill="#FAFAFA" class="mono" font-size="15">步數：<tspan font-weight="700">7</tspan></text>
+    <text x="16" y="52" fill="#FAFAFA" class="mono" font-size="15">世界時間：<tspan font-weight="700">28.4s</tspan> (已凍結)</text>
+    <text x="16" y="76" fill="#FAFAFA" class="mono" font-size="15">死亡次數：<tspan font-weight="700">0</tspan></text>
+  </g>
+
+  <!-- 底部面板 -->
+  <g transform="translate(24, 628)">
+    <rect x="0" y="0" width="930" height="68" rx="8" fill="rgba(24,24,27,0.92)" stroke="#71717A" stroke-width="1.5"/>
+    <text x="16" y="26" fill="#E4E4E7" class="mono" font-size="14">前搖蓄力計時已暫停 (0.50s / 0.80s) — 解凍後原進度繼續</text>
+    <rect x="16" y="38" width="898" height="14" rx="7" fill="#27272A"/>
+    <rect x="16" y="38" width="204" height="14" rx="7" fill="#A1A1AA"/>
+
+    <rect x="946" y="0" width="286" height="68" rx="8" fill="rgba(24,24,27,0.92)" stroke="#FAFAFA" stroke-width="1.5"/>
+    <text x="962" y="26" fill="#FAFAFA" class="mono" font-size="14" font-weight="700">聲納凍結中：剩餘 2.4s</text>
+    <rect x="962" y="38" width="254" height="14" rx="7" fill="#27272A"/>
+    <rect x="962" y="38" width="203" height="14" rx="7" fill="#FAFAFA"/>
+  </g>
+</svg>

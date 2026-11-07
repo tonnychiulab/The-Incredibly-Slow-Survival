@@ -1,0 +1,8 @@
+{
+  // 依 docs/contract.md §1：Cloudflare Workers + Static Assets 設定
+  "name": "the-incredibly-slow-survival",
+  "compatibility_date": "2026-11-01",
+  "assets": {
+    "directory": "./dist"
+  }
+}

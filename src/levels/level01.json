@@ -1,0 +1,51 @@
+{
+  "id": "level01",
+  "start": { "x": 0, "y": 0 },
+  "goalX": 25,
+  "platforms": [
+    { "startX": 0, "endX": 18, "y": 0 },
+    { "startX": 21, "endX": 25, "y": 0 }
+  ],
+  "checkpoints": [
+    { "id": "cp1", "x": 8, "y": 0 },
+    { "id": "cp2", "x": 16, "y": 0 }
+  ],
+  "hazards": [
+    {
+      "id": "rock-1",
+      "type": "rock",
+      "x": 4,
+      "topY": 6,
+      "bottomY": 0,
+      "width": 0.8,
+      "height": 0.8,
+      "periodTicks": 180,
+      "phaseTicks": 0,
+      "fallTicks": 60
+    },
+    {
+      "id": "saw-1",
+      "type": "saw",
+      "startX": 9.8,
+      "startY": 0,
+      "endX": 10.2,
+      "endY": 4.0,
+      "width": 0.8,
+      "height": 0.8,
+      "periodTicks": 120,
+      "phaseTicks": 0
+    },
+    {
+      "id": "rock-2",
+      "type": "rock",
+      "x": 23,
+      "topY": 5,
+      "bottomY": 0,
+      "width": 0.8,
+      "height": 0.8,
+      "periodTicks": 90,
+      "phaseTicks": 30,
+      "fallTicks": 45
+    }
+  ]
+}

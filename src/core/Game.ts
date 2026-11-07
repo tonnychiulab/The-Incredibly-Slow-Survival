@@ -28,9 +28,15 @@ export class Game {
     this.renderer = new Renderer(container, this.levelData);
     this.hud = new HUD(container, () => this.restart());
 
-    this.input.attach(window, () => {
-      this.audio.unlockAndStart();
-    });
+    this.input.attach(
+      window,
+      () => {
+        this.audio.unlockAndStart();
+      },
+      () => {
+        this.restart();
+      }
+    );
 
     this.loading.finish();
   }

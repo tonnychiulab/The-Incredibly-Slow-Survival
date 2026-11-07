@@ -41,6 +41,7 @@ export interface SlothState {
   stepTargetX: number;
   hitboxMultiplier: number;
   hitbox: AABB;
+  isClimbingCanopy: boolean;
 }
 
 export interface CheckpointSnapshot {
@@ -50,6 +51,7 @@ export interface CheckpointSnapshot {
   worldTick: number;
   steps: number;
   checkpointIndex: number;
+  unlockedCanopyIds: string[];
 }
 
 export interface PlatformDef {
@@ -61,6 +63,20 @@ export interface PlatformDef {
 export interface CheckpointDef {
   id: string;
   x: number;
+  y: number;
+}
+
+export interface VineSwitchDef {
+  id: string;
+  x: number;
+  y: number;
+  targetCanopyId: string;
+}
+
+export interface CanopyBranchDef {
+  id: string;
+  startX: number;
+  endX: number;
   y: number;
 }
 
@@ -99,6 +115,8 @@ export interface LevelData {
   platforms: PlatformDef[];
   checkpoints: CheckpointDef[];
   hazards: HazardDef[];
+  vineSwitches?: VineSwitchDef[];
+  canopyBranches?: CanopyBranchDef[];
 }
 
 export interface HazardSnapshot {
@@ -119,6 +137,7 @@ export interface SimulationState {
   lastDeathCause: DeathCause | null;
   respawnRemainingTicks: number;
   activeCheckpointIndex: number;
+  unlockedCanopyIds: string[];
   isVictory: boolean;
   hazards: HazardSnapshot[];
   predictedPaths: Record<string, Vec2[]>;

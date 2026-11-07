@@ -38,7 +38,7 @@ export class HUD {
     titleBlock.innerHTML = `
       <div style="font-size:18px;font-weight:700;color:#FBBF24;">${BRAND.GAME_TITLE}</div>
       <div style="font-size:12px;opacity:0.75;">${BRAND.SUBTITLE} · ${BRAND.STUDIO}</div>
-      <div style="font-size:12px;opacity:0.75;margin-top:4px;">[←/→ 或 A/D] 長按蓄力放開出步 ｜ [Space/S] 聲納凍結預覽</div>
+      <div style="font-size:12px;opacity:0.85;margin-top:4px;">[A/D 或 ←/→] 長按蓄力放開出步（大步可抓高空樹藤倒掛攀爬） ｜ [E/Space/S] 聲納凍結 ｜ [R] 重試</div>
     `;
 
     this.statsEl = document.createElement('div');
@@ -99,10 +99,12 @@ export class HUD {
   public update(state: SimulationState): void {
     const worldSec = (state.worldTick / CONFIG.tickRate).toFixed(1);
 
+    const vineUnlocked = state.unlockedCanopyIds.includes('canopy-1');
     this.statsEl.innerHTML = `
-      <div>步數：<strong>${state.steps}</strong></div>
+      <div>步數：<strong>${state.steps}</strong> ｜ 座標 X：<strong>${state.sloth.x.toFixed(1)}</strong></div>
       <div>世界時間：<strong>${worldSec}s</strong> / 600.0s</div>
       <div>死亡次數：<strong>${state.deaths}</strong></div>
+      <div style="color:${vineUnlocked ? '#34D399' : '#FBBF24'};">深坑樹藤：<strong>${vineUnlocked ? '已展開（大步可倒掛攀爬）' : '未展開（先往左至 X=-3 啟動石碑）'}</strong></div>
     `;
 
     const hold = state.sloth.holdTicks;
@@ -116,7 +118,9 @@ export class HUD {
       tierName = `轉身中 (${(state.sloth.turnTicks / CONFIG.tickRate).toFixed(2)}s / 0.40s)`;
       barColor = '#F59E0B';
     } else if (state.sloth.phase === 'stepping') {
-      tierName = `出步移動中 (碰撞盒 ×${state.sloth.hitboxMultiplier.toFixed(1)})`;
+      tierName = state.sloth.isClimbingCanopy
+        ? `三趾爪倒掛攀爬樹藤中！(碰撞盒 ×${state.sloth.hitboxMultiplier.toFixed(1)})`
+        : `出步移動中 (碰撞盒 ×${state.sloth.hitboxMultiplier.toFixed(1)})`;
       barColor = '#10B981';
     } else if (state.sloth.phase === 'windup') {
       const holdSec = (hold / CONFIG.tickRate).toFixed(2);

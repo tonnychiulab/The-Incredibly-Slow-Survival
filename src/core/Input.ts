@@ -5,6 +5,7 @@ export class Input {
   private keyDownState: Record<Direction, boolean> = { left: false, right: false };
   private firstGestureFired = false;
   private onFirstGestureCb?: () => void;
+  private onRestartCb?: () => void;
 
   private readonly handleKeyDown = (e: KeyboardEvent): void => {
     this.notifyFirstGesture();
@@ -18,11 +19,25 @@ export class Input {
       return;
     }
 
-    if (e.code === 'Space' || e.code === 'KeyS' || e.code === 'ArrowDown') {
+    if (
+      e.code === 'KeyE' ||
+      e.code === 'Space' ||
+      e.code === 'KeyS' ||
+      e.code === 'ArrowDown'
+    ) {
       e.preventDefault();
       if (!e.repeat) {
         this.pendingEvents.push({ type: 'sonar' });
       }
+      return;
+    }
+
+    if (e.code === 'KeyR' && !e.repeat) {
+      e.preventDefault();
+      this.keyDownState.left = false;
+      this.keyDownState.right = false;
+      this.pendingEvents = [];
+      this.onRestartCb?.();
     }
   };
 
@@ -43,8 +58,13 @@ export class Input {
     this.pendingEvents.push({ type: 'blur' });
   };
 
-  public attach(target: Window = window, onFirstGesture?: () => void): void {
+  public attach(
+    target: Window = window,
+    onFirstGesture?: () => void,
+    onRestart?: () => void
+  ): void {
     this.onFirstGestureCb = onFirstGesture;
+    this.onRestartCb = onRestart;
     target.addEventListener('keydown', this.handleKeyDown);
     target.addEventListener('keyup', this.handleKeyUp);
     target.addEventListener('blur', this.handleBlur);

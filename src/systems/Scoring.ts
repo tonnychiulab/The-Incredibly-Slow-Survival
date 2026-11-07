@@ -7,7 +7,11 @@ export class Scoring {
   public isVictory = false;
   private snapshot: CheckpointSnapshot;
 
-  constructor(start: Vec2, initialFacing: Direction = 'right') {
+  constructor(
+    start: Vec2,
+    initialFacing: Direction = 'right',
+    initialUnlockedCanopyIds: string[] = []
+  ) {
     this.snapshot = {
       x: start.x,
       y: start.y,
@@ -15,6 +19,7 @@ export class Scoring {
       worldTick: 0,
       steps: 0,
       checkpointIndex: -1,
+      unlockedCanopyIds: [...initialUnlockedCanopyIds],
     };
   }
 
@@ -23,13 +28,17 @@ export class Scoring {
   }
 
   public get currentSnapshot(): CheckpointSnapshot {
-    return { ...this.snapshot };
+    return {
+      ...this.snapshot,
+      unlockedCanopyIds: [...this.snapshot.unlockedCanopyIds],
+    };
   }
 
   public checkAndActivateCheckpoint(
     checkpoints: CheckpointDef[],
     sloth: SlothState,
-    worldTick: number
+    worldTick: number,
+    unlockedCanopyIds: ReadonlySet<string>
   ): void {
     const tileX = Math.round(sloth.x);
     for (let i = 0; i < checkpoints.length; i++) {
@@ -41,6 +50,7 @@ export class Scoring {
           worldTick,
           steps: this.steps,
           checkpointIndex: i,
+          unlockedCanopyIds: [...unlockedCanopyIds],
         };
       }
     }

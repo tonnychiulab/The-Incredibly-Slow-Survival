@@ -14,13 +14,17 @@ export class Simulation {
   private sloth: Sloth;
   private sonar = new SonarSystem();
   private scoring: Scoring;
+  private unlockedCanopyIds: Set<string>;
   private lastDeathCause: DeathCause | null = null;
   private respawnRemainingTicks = 0;
 
   constructor(levelData: LevelData) {
     this.level = LevelLoader.load(levelData);
     this.sloth = new Sloth(this.level.start.x, this.level.start.y);
-    this.scoring = new Scoring(this.level.start, this.sloth.facing);
+    const initialUnlocked = this.level.getInitialUnlockedCanopyIds();
+    this.unlockedCanopyIds = new Set(initialUnlocked);
+    this.scoring = new Scoring(this.level.start, this.sloth.facing, initialUnlocked);
+    this.checkVineSwitches();
   }
 
   public static runReplay(
@@ -51,6 +55,27 @@ export class Simulation {
     this.respawnRemainingTicks = CONFIG.respawnDelayTicks;
   }
 
+  private evaluateCanopyClimbForCurrentStep(): void {
+    const dist = Math.round(Math.abs(this.sloth.stepTargetX - this.sloth.stepStartX));
+    const hasCanopy = this.level.hasUnlockedCanopyForSpan(
+      this.sloth.stepStartX,
+      this.sloth.stepTargetX,
+      this.unlockedCanopyIds
+    );
+    const targetSolid = Physics.isSolidTile(this.level.platforms, this.sloth.stepTargetX);
+    // 當頭頂有已解鎖的樹藤橫枝且玩家使出 3 格大步伸展時，樹懶會勾住頭頂橫枝進行倒掛攀爬（可越過深坑或地面圓鋸）
+    this.sloth.isClimbingCanopy = dist >= 3 && hasCanopy && targetSolid;
+  }
+
+  private checkVineSwitches(): void {
+    const tileX = Math.round(this.sloth.x);
+    for (const sw of this.level.vineSwitches) {
+      if (tileX === sw.x) {
+        this.unlockedCanopyIds.add(sw.targetCanopyId);
+      }
+    }
+  }
+
   public stepTick(events: InputEvent[]): void {
     if (this.scoring.isVictory) {
       return;
@@ -70,6 +95,7 @@ export class Simulation {
 
     if (this.sloth.consumeStepStartedFlag()) {
       this.scoring.steps += 1;
+      this.evaluateCanopyClimbForCurrentStep();
     }
 
     const frozenThisTick = this.sonar.isFrozen();
@@ -85,6 +111,7 @@ export class Simulation {
         this.sloth.restoreSnapshot(snap);
         this.clock.resetWorldTick(snap.worldTick);
         this.scoring.steps = snap.steps;
+        this.unlockedCanopyIds = new Set(snap.unlockedCanopyIds);
       }
       return;
     }
@@ -93,11 +120,25 @@ export class Simulation {
       const { stepStarted, stepLanded } = this.sloth.updateWorldTick();
       if (stepStarted) {
         this.scoring.steps += 1;
+        this.evaluateCanopyClimbForCurrentStep();
       }
 
-      if (stepLanded && !Physics.isSolidTile(this.level.platforms, this.sloth.x)) {
-        this.triggerDeath('墜落');
-        return;
+      if (stepLanded) {
+        const landedOnSolid = Physics.isSolidTile(this.level.platforms, this.sloth.x);
+        const crossedGapWithoutCanopy =
+          this.level.spanCrossesGap(this.sloth.stepStartX, this.sloth.stepTargetX) &&
+          !this.level.hasUnlockedCanopyForSpan(
+            this.sloth.stepStartX,
+            this.sloth.stepTargetX,
+            this.unlockedCanopyIds
+          );
+
+        if (!landedOnSolid || crossedGapWithoutCanopy) {
+          this.triggerDeath('墜落');
+          return;
+        }
+
+        this.checkVineSwitches();
       }
 
       const slothBox = this.sloth.getHitbox();
@@ -117,7 +158,8 @@ export class Simulation {
         this.scoring.checkAndActivateCheckpoint(
           this.level.checkpoints,
           this.sloth.getState(),
-          this.clock.worldTick
+          this.clock.worldTick,
+          this.unlockedCanopyIds
         );
 
         if (this.sloth.x >= this.level.goalX) {
@@ -141,6 +183,7 @@ export class Simulation {
       lastDeathCause: this.lastDeathCause,
       respawnRemainingTicks: this.respawnRemainingTicks,
       activeCheckpointIndex: this.scoring.activeCheckpointIndex,
+      unlockedCanopyIds: [...this.unlockedCanopyIds],
       isVictory: this.scoring.isVictory,
       hazards: this.level.hazards.map((h) => ({
         id: h.id,

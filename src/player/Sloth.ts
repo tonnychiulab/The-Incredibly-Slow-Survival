@@ -19,6 +19,7 @@ export class Sloth {
   public stepStartX = 0;
   public stepTargetX = 0;
   public hitboxMultiplier: number = CONFIG.hitboxMultipliers.idle;
+  public isClimbingCanopy = false;
 
   private heldDirs: Direction[] = [];
   private pendingStepStarted = false;
@@ -93,11 +94,13 @@ export class Sloth {
 
   public die(): void {
     this.phase = 'dead';
+    this.y = 0;
     this.heldDirs = [];
     this.holdTicks = 0;
     this.turnTicks = 0;
     this.stepTicks = 0;
     this.hitboxMultiplier = CONFIG.hitboxMultipliers.idle;
+    this.isClimbingCanopy = false;
     this.pendingStepStarted = false;
   }
 
@@ -112,6 +115,7 @@ export class Sloth {
     this.turnTicks = 0;
     this.stepTicks = 0;
     this.hitboxMultiplier = CONFIG.hitboxMultipliers.idle;
+    this.isClimbingCanopy = false;
     this.pendingStepStarted = false;
   }
 
@@ -161,12 +165,17 @@ export class Sloth {
       this.stepTicks += 1;
       const progress = Math.min(1, this.stepTicks / CONFIG.stepDurationTicks);
       this.x = this.stepStartX + (this.stepTargetX - this.stepStartX) * progress;
+      if (this.isClimbingCanopy) {
+        this.y = 0.88 + Math.sin(progress * Math.PI) * 0.28;
+      }
 
       if (this.stepTicks >= CONFIG.stepDurationTicks) {
         this.x = this.stepTargetX;
+        this.y = 0;
         this.phase = 'idle';
         this.stepTicks = 0;
         this.hitboxMultiplier = CONFIG.hitboxMultipliers.idle;
+        this.isClimbingCanopy = false;
         stepLanded = true;
       }
       return { stepStarted, stepLanded };
@@ -199,6 +208,7 @@ export class Sloth {
       stepTargetX: this.stepTargetX,
       hitboxMultiplier: this.hitboxMultiplier,
       hitbox: this.getHitbox(),
+      isClimbingCanopy: this.isClimbingCanopy,
     };
   }
 }
